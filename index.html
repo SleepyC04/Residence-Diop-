@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<title>Caisse Guinée</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--tx:#1d1d1b;--mut:#6b6a66;--ac:#0a7a4b;--acx:#fff;--bd:#e2e0d9;--rd:#b3261e;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#161615;--card:#222221;--tx:#f1f0ec;--mut:#a5a39c;--ac:#3fbf86;--acx:#0b1f16;--bd:#38372f;--rd:#ff8a80;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.4 -apple-system,system-ui,"Segoe UI",Roboto,sans-serif;padding-bottom:70px}
+h1{font-size:18px;margin:0}
+header{padding:14px 16px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+.lgb{border:1px solid var(--bd);background:none;color:var(--tx);border-radius:8px;padding:6px 12px;font:700 14px inherit}
+main{padding:12px 16px;max-width:720px;margin:auto}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:var(--card);border-top:1px solid var(--bd);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:14px 4px;background:none;border:0;color:var(--mut);font:600 14px inherit}
+nav button.on{color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:12px 0}
+.it{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px 8px;text-align:left;color:var(--tx);font:inherit;min-height:64px}
+.it b{display:block;font-size:15px}.it span{color:var(--mut);font-size:13px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;margin:12px 0}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0}
+.q{display:flex;align-items:center;gap:8px}
+.q button{width:34px;height:34px;border-radius:50%;border:1px solid var(--bd);background:none;color:var(--tx);font-size:18px}
+input,select{width:100%;padding:11px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;background:var(--ac);color:var(--acx);font:700 16px inherit;margin-top:10px}
+.btn.s{background:none;border:1px solid var(--bd);color:var(--tx)}
+.btn:disabled{opacity:.4}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tot{font-weight:700;font-size:18px}
+.err{color:var(--rd);font-size:14px;margin-top:8px}
+.mut{color:var(--mut);font-size:13px}
+.mr{display:grid;grid-template-columns:1fr 90px 80px 30px;gap:6px;margin:6px 0}
+.mr button{border:0;background:none;color:var(--rd);font-size:20px}
+#rc{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px;z-index:9}
+#rc .p{background:#fff;color:#000;border-radius:12px;padding:16px;width:100%;max-width:340px;max-height:90vh;overflow:auto;font:13px/1.5 ui-monospace,Menlo,monospace}
+#rc .row{padding:1px 0}
+#rc hr{border:0;border-top:1px dashed #888;margin:8px 0}
+.c{text-align:center}
+.rn{font-size:17px;font-weight:700;letter-spacing:.5px}
+#rc table{width:100%;border-collapse:collapse;font-size:12px}
+#rc th{text-align:left;border-bottom:1px solid #000;padding:2px 0}
+#rc td{padding:3px 0;vertical-align:top}
+#rc .r{text-align:right;white-space:nowrap}
+#rc .net{border-top:2px solid #000;border-bottom:2px solid #000;padding:6px 0;margin:8px 0;font-size:16px;font-weight:700;display:flex;justify-content:space-between}
+@page{size:80mm auto;margin:4mm}
+@media print{#rc .p{max-width:none;max-height:none;overflow:visible}body *{visibility:hidden}#rc,#rc .p,#rc .p *{visibility:visible}#rc{position:static;background:none}.no{display:none!important}}
+</style>
+</head>
+<body>
+<header><h1 id="ttl"></h1><span><span class="mut" id="sy"></span> <button class="lgb" id="lo" data-a="out"></button> <button class="lgb" id="lg" data-a="lang"></button></span></header>
+<main id="app"></main>
+<nav><button data-v="tabs"></button><button data-v="rec"></button><button data-v="set"></button></nav>
+<div id="rc"><div class="p"><div id="rb"></div><button class="btn no" data-a="pr" id="prb"></button><button class="btn s no" data-a="cl" id="clb"></button></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+/* CLOUD: paste your Supabase Project URL and anon key between the quotes */
+const CLOUD={url:"https://iekcjkvuhfscwthmfodz.supabase.co",key:"sb_publishable_ItTgXqzyPj2AjZxDZD02kw_ErnfXGCv"},sb=(CLOUD.url&&window.supabase)?supabase.createClient(CLOUD.url,CLOUD.key):null,KEY="caisse-gn-v2",$=id=>document.getElementById(id),NUM=["rate","tvaRoom","tvaDirect","ttc","tour","roomRate"];
+let S={cfg:{name:"Mon Hôtel",addr:"Conakry, Guinée",nif:"",cur:"GNF",rate:18,ttc:0,tvaRoom:1,tvaDirect:0,tour:10000,roomRate:500000,till:"",foot:"Merci de votre visite !",lang:"fr"},
+menu:[{n:"Poulet braisé",p:60000,t:1},{n:"Poisson grillé",p:75000,t:1},{n:"Riz sauce",p:35000,t:1},{n:"Eau 1,5 L",p:8000,t:1},{n:"Bière",p:15000,t:1}],tabs:[],rec:[],ctr:{d:"",n:0},seq:0,users:[],cloud:{co:"",coName:"",role:"",name:"",uid:"",lp:"",h:{}}};
+const DEF=JSON.stringify(S);try{const x=localStorage.getItem(KEY);if(x){const o=JSON.parse(x),d=S.cfg;S=Object.assign(S,o);S.cfg=Object.assign({},d,o.cfg)}}catch(e){}
+let ST;function store(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function save(){store();if(sb&&S.cloud.co){clearTimeout(ST);ST=setTimeout(sync,1500)}}
+const L={fr:{tabs:"Notes",rec:"Reçus",set:"Réglages",nr:"+ Chambre",nb:"+ Bar / Comptoir",none:"Aucune note ouverte.",room:"Chambre",bar:"Bar / Comptoir",back:"← Retour",lbl:"N° chambre / table",guest:"Client",pers:"Personnes",nights:"Nuits",rate:"Prix par nuit (HT)",tour:"Taxe touristique",ht:"Total HT",tva:"TVA",net:"NET À PAYER",pay:"Paiements",paid:"Payé",left:"Reste à payer",addpay:"Ajouter le paiement",close:"Clôturer et imprimer",cancel:"Annuler la note",cash:"Espèces",om:"Orange Money",momo:"MTN MoMo",card:"Carte",bank:"Virement",inv:"FACTURE",qty:"Qté",item:"Désignation",amt:"Montant HT",notax:"* sans TVA",today:"Aujourd’hui",exp:"Exporter vers Excel (.csv)",co:"Entreprise",name:"Nom",addr:"Adresse / téléphone",nif:"NIF",cur:"Devise",till:"Code caisse (optionnel, ex. A)",foot:"Message en bas du reçu",tx:"Taxes",vat:"Taux de TVA (%)",tvaRoom:"TVA sur les notes chambre",tvaDirect:"TVA sur les ventes directes (bar/comptoir)",ttc:"Prix du menu saisis",ttc0:"Hors TVA",ttc1:"TVA incluse",rr:"Prix chambre par défaut (par nuit)",chk:"Vérifiez ces règles avec votre comptable ou la DGI.",menu:"Menu / tarifs",addm:"+ Article",newItem:"Nouvel article",tvaon:"Avec TVA",tvaoff:"Sans TVA",yes:"Oui",no:"Non",tourS:"Taxe touristique (par personne et par nuit)"},
+en:{tabs:"Tabs",rec:"Receipts",set:"Settings",nr:"+ Room",nb:"+ Bar / Counter",none:"No open tabs.",room:"Room",bar:"Bar / Counter",back:"← Back",lbl:"Room no. / table",guest:"Guest",pers:"Persons",nights:"Nights",rate:"Rate per night (excl. VAT)",tour:"Tourist tax",ht:"Total excl. VAT",tva:"VAT",net:"AMOUNT DUE",pay:"Payments",paid:"Paid",left:"Balance due",addpay:"Add payment",close:"Close and print",cancel:"Cancel tab",cash:"Cash",om:"Orange Money",momo:"MTN MoMo",card:"Card",bank:"Bank transfer",inv:"INVOICE",qty:"Qty",item:"Item",amt:"Amount excl. VAT",notax:"* no VAT",today:"Today",exp:"Export to Excel (.csv)",co:"Business",name:"Name",addr:"Address / phone",nif:"Tax ID (NIF)",cur:"Currency",till:"Till code (optional, e.g. A)",foot:"Receipt footer message",tx:"Taxes",vat:"VAT rate (%)",tvaRoom:"VAT on room tabs",tvaDirect:"VAT on direct sales (bar/counter)",ttc:"Menu prices entered",ttc0:"Excl. VAT",ttc1:"Incl. VAT",rr:"Default room rate (per night)",chk:"Check these rules with your accountant or the tax office (DGI).",menu:"Menu / prices",addm:"+ Item",newItem:"New item",tvaon:"With VAT",tvaoff:"No VAT",yes:"Yes",no:"No",tourS:"Tourist tax (per person per night)"}};
+Object.assign(L.fr,{login:"Connexion",setup:"Créer le compte administrateur",user:"Utilisateur",pin:"Code PIN",pin2:"Confirmer le PIN",enter:"Entrer",create:"Créer",bad:"PIN incorrect.",pinrule:"Le PIN doit avoir au moins 4 chiffres.",nomatch:"Les PIN ne correspondent pas.",reqname:"Nom requis.",lastadmin:"Il faut au moins un administrateur.",users:"Utilisateurs",admin:"Administrateur",staff:"Employé",role:"Rôle",newpin:"Nouveau PIN",adduser:"+ Ajouter l’utilisateur",by:"Caissier",sec:"Le PIN protège l’accès sur cet appareil. Une sécurité complète (comptes en ligne) demande la version cloud."});
+Object.assign(L.en,{login:"Log in",setup:"Create the admin account",user:"User",pin:"PIN code",pin2:"Confirm PIN",enter:"Enter",create:"Create",bad:"Wrong PIN.",pinrule:"PIN must be at least 4 digits.",nomatch:"PINs do not match.",reqname:"Name required.",lastadmin:"At least one admin is required.",users:"Users",admin:"Admin",staff:"Staff",role:"Role",newpin:"New PIN",adduser:"+ Add user",by:"Cashier",sec:"The PIN protects access on this device. Full security (online accounts) needs the cloud version."});
+Object.assign(L.fr,{signup:"Créer un compte",email:"E-mail",pw:"Mot de passe",yname:"Votre nom",cname:"Nom de l’entreprise",setupco:"Créer une entreprise (propriétaire)",join:"Rejoindre une entreprise",joinb:"Rejoindre",code:"Code d’invitation",authfail:"E-mail ou mot de passe incorrect.",confirm:"Compte créé. Confirmez votre e-mail puis connectez-vous.",fail:"Échec. Vérifiez les champs et la connexion.",badcode:"Code invalide.",neednet:"Connexion internet requise pour la première ouverture.",cinfo:"Donnez le code d’invitation à vos employés : ils créent un compte et le saisissent. Vous pouvez ensuite changer leur rôle."});
+Object.assign(L.en,{signup:"Create account",email:"Email",pw:"Password",yname:"Your name",cname:"Business name",setupco:"Create a business (owner)",join:"Join a business",joinb:"Join",code:"Invite code",authfail:"Wrong email or password.",confirm:"Account created. Confirm your email, then log in.",fail:"Failed. Check the fields and your connection.",badcode:"Invalid code.",neednet:"Internet is required the first time you open the app.",cinfo:"Give the invite code to your staff: they create an account and enter it. You can then change their role."});
+const t=k=>(L[S.cfg.lang]||L.fr)[k]||k;
+const nn=n=>Math.round(n).toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g," "),f=n=>nn(n)+" "+S.cfg.cur;
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const p2=n=>String(n).padStart(2,"0"),ymd=d=>d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate());
+const MET=["cash","om","momo","card","bank"];
+let V="tabs",CUR=null,SES=null,ERR="",BOOT=!!sb,AUTHED=false,MEM=[],CODE="",SYN=false;
+const rnd=()=>Math.random().toString(36).slice(2)+Date.now().toString(36);
+async function hp(salt,pin){try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(salt+pin));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){let h=0;for(const ch of salt+pin)h=(h*31+ch.charCodeAt(0))|0;return "x"+h}}
+const fld=(id,lab,ty)=>`<label>${t(lab)}</label><input id="${id}" type="${ty||"text"}"${ty==="password"?' inputmode="numeric" autocomplete="off"':""}>`;
+const errh=()=>ERR?`<div class="err">${t(ERR)}</div>`:"";
+function vLogin(){if(CLOUD.url)return vCloud();
+ if(!S.users.length)return `<div class="card"><b>${t("setup")}</b>${fld("un","name")}${fld("p1","pin","password")}${fld("p2","pin2","password")}<button class="btn" data-a="mk">${t("create")}</button>${errh()}</div>`;
+ return `<div class="card"><b>${t("login")}</b><label>${t("user")}</label><select id="un">${S.users.map(u=>`<option value="${u.id}">${esc(u.name)} (${t(u.role)})</option>`).join("")}</select>${fld("p1","pin","password")}<button class="btn" data-a="in">${t("enter")}</button>${errh()}</div>`}
+const tab=()=>S.tabs.find(x=>x.id===CUR);
+function lines(x){const c=S.cfg,a=[];
+ if(x.type==="room"){a.push({n:t("room")+" "+x.label,q:x.nights,p:x.rate,t:1});a.push({n:t("tour")+" ("+x.persons+" × "+x.nights+")",q:x.persons*x.nights,p:c.tour,t:0,tour:1})}
+ return a.concat(x.items.map((l,ix)=>({...l,ix})))}
+function calc(x){const c=S.cfg,r=c.rate/100,on=x.type==="room"?c.tvaRoom:c.tvaDirect;let ht=0,tva=0;
+ const ls=lines(x).map(l=>{const tx=!!(l.t&&on&&!l.tour),base=Math.round(l.q*(tx&&c.ttc?l.p/(1+r):l.p)),v=tx?Math.round(base*r):0;ht+=base;tva+=v;return{...l,tx,base,v}});
+ return{ls,ht,tva,tot:ht+tva,on:!!on,rate:c.rate}}
+const due=x=>Math.max(0,calc(x).tot-x.pays.reduce((a,p)=>a+p.a,0));
+function nextNo(d){const k=ymd(d);if(S.ctr.d!==k)S.ctr={d:k,n:0};S.ctr.n++;return k+(S.cfg.till?"-"+S.cfg.till:"")+"-"+String(S.ctr.n).padStart(3,"0")}
+function vTabs(){
+ return `<div class="two"><button class="btn" data-a="nr">${t("nr")}</button><button class="btn s" data-a="nb">${t("nb")}</button></div>`+
+ (S.tabs.length?S.tabs.map(x=>`<div class="card row" data-a="open" data-id="${x.id}"><span><b>${t(x.type)} ${esc(x.label)}</b><br><span class="mut">${esc(x.guest)}</span></span><b>${f(calc(x).tot)}</b></div>`).join(""):`<p class="mut">${t("none")}</p>`)}
+function vTab(){
+ const x=tab();if(!x){V="tabs";return vTabs()}
+ const c=calc(x),paid=x.pays.reduce((a,p)=>a+p.a,0),left=Math.max(0,c.tot-paid);
+ let h=`<button class="btn s" data-a="back">${t("back")}</button><div class="card"><b>${t(x.type)}</b><label>${t("lbl")}</label><input data-f="label" value="${esc(x.label)}">`;
+ if(x.type==="room")h+=`<label>${t("guest")}</label><input data-f="guest" value="${esc(x.guest)}"><div class="two"><div><label>${t("pers")}</label><input data-f="persons" type="number" inputmode="numeric" value="${x.persons}"></div><div><label>${t("nights")}</label><input data-f="nights" type="number" inputmode="numeric" value="${x.nights}"></div></div><label>${t("rate")}</label><input data-f="rate" type="number" inputmode="numeric" value="${x.rate}">`;
+ h+=`</div><div class="grid">`+S.menu.map((m,i)=>`<button class="it" data-a="add" data-i="${i}"><b>${esc(m.n)}</b><span>${f(m.p)}</span></button>`).join("")+`</div><div class="card">`+
+ c.ls.map(l=>`<div class="row"><span>${esc(l.n)}${c.on&&!l.tx?" *":""}</span><span class="q">${l.ix!==undefined?`<button data-a="m" data-i="${l.ix}">−</button>${l.q}<button data-a="p" data-i="${l.ix}">+</button>`:"× "+l.q}</span><span>${nn(l.base)}</span></div>`).join("")+
+ `<hr style="border:0;border-top:1px solid var(--bd)"><div class="row"><span>${t("ht")}</span><span>${f(c.ht)}</span></div>`+(c.on?`<div class="row"><span>${t("tva")} ${c.rate}%</span><span>${f(c.tva)}</span></div>`:"")+`<div class="row tot"><span>${t("net")}</span><span>${f(c.tot)}</span></div></div>`+
+ `<div class="card"><b>${t("pay")}</b>`+x.pays.map((p,i)=>`<div class="row"><span>${t(p.m)}</span><span>${f(p.a)} <button class="lgb" data-a="rp" data-i="${i}">×</button></span></div>`).join("")+
+ `<div class="row"><span>${t("paid")}</span><span>${f(paid)}</span></div><div class="row tot"><span>${t("left")}</span><span>${f(left)}</span></div>`+
+ (left>0?`<div class="two"><select id="pm">${MET.map(m=>`<option value="${m}">${t(m)}</option>`).join("")}</select><input id="pa" type="number" inputmode="numeric" value="${left}"></div><button class="btn s" data-a="ap">${t("addpay")}</button>`:"")+
+ `<button class="btn" data-a="close"${left>0||!c.ls.length?" disabled":""}>${t("close")}</button>`+(x.pays.length?"":`<button class="btn s" data-a="del">${t("cancel")}</button>`)+`</div>`;
+ return h}
+function vRec(){const k=ymd(new Date()),td=S.rec.filter(r=>r.no.startsWith(k));
+ return `<div class="card"><div class="mut">${t("today")} : ${td.length} · ${f(td.reduce((a,r)=>a+r.snap.tot,0))}</div><button class="btn" data-a="exp">${t("exp")}</button></div>`+
+ S.rec.slice(0,100).map((r,i)=>`<div class="card row" data-a="rc" data-i="${i}"><span><b>${r.no}</b><br><span class="mut">${t(r.type)} ${esc(r.label)}</span></span><b>${f(r.snap.tot)}</b></div>`).join("")}
+const inp=(k,lab,n)=>`<label>${t(lab)}</label><input data-c="${k}"${n?` type="number" inputmode="decimal"`:""} value="${esc(S.cfg[k])}">`;
+const sel=(k,lab,o)=>`<label>${t(lab)}</label><select data-c="${k}">${o.map(([v,l])=>`<option value="${v}"${S.cfg[k]==v?" selected":""}>${t(l)}</option>`).join("")}</select>`;
+const YN=[[1,"yes"],[0,"no"]];
+function vSetL(){
+ return `<div class="card"><b>${t("co")}</b>`+inp("name","name")+inp("addr","addr")+inp("nif","nif")+inp("cur","cur")+inp("till","till")+inp("foot","foot")+`</div><div class="card"><b>${t("tx")}</b>`+inp("rate","vat",1)+sel("tvaRoom","tvaRoom",YN)+sel("tvaDirect","tvaDirect",YN)+sel("ttc","ttc",[[0,"ttc0"],[1,"ttc1"]])+inp("tour","tourS",1)+inp("roomRate","rr",1)+`<p class="mut">${t("chk")}</p></div><div class="card"><b>${t("menu")}</b>`+
+ S.menu.map((m,i)=>`<div class="mr"><input data-mn="${i}" value="${esc(m.n)}"><input data-mp="${i}" type="number" inputmode="numeric" value="${m.p}"><select data-mt="${i}"><option value="1"${m.t?" selected":""}>${t("tvaon")}</option><option value="0"${m.t?"":" selected"}>${t("tvaoff")}</option></select><button data-a="delm" data-i="${i}">×</button></div>`).join("")+`<button class="btn s" data-a="addm">${t("addm")}</button></div><div class="card"><b>${t("users")}</b>`+S.users.map((u,i)=>`<div class="mr" style="grid-template-columns:1fr 90px 44px 30px"><span>${esc(u.name)}<br><span class="mut">${t(u.role)}</span></span><input id="pu${i}" type="password" inputmode="numeric" placeholder="${t("newpin")}"><button style="color:var(--ac)" data-a="pu" data-i="${i}">OK</button>${u===SES?"<span></span>":`<button data-a="du" data-i="${i}">×</button>`}</div>`).join("")+`<label>${t("name")}</label><input id="nu"><label>${t("role")}</label><select id="nrl"><option value="staff">${t("staff")}</option><option value="admin">${t("admin")}</option></select>`+fld("np","pin","password")+`<button class="btn s" data-a="au">${t("adduser")}</button>${errh()}<p class="mut">${t("sec")}</p></div>`}
+function vCloud(){
+ if(!sb)return `<p class="mut">${t("neednet")}</p>`;
+ if(BOOT)return `<p class="mut">…</p>`;
+ if(AUTHED)return `<div class="card"><b>${t("setupco")}</b>${fld("cn","cname")}${fld("un","yname")}<button class="btn" data-a="cc">${t("create")}</button></div><div class="card"><b>${t("join")}</b>${fld("jc","code")}${fld("un2","yname")}<button class="btn s" data-a="jc">${t("joinb")}</button>${errh()}</div>`;
+ return `<div class="card"><b>${t("login")}</b><label>${t("email")}</label><input id="em" type="email" autocomplete="username" autocapitalize="off"><label>${t("pw")}</label><input id="pw" type="password" autocomplete="current-password"><button class="btn" data-a="li">${t("enter")}</button><button class="btn s" data-a="su">${t("signup")}</button>${errh()}</div>`}
+function vMembers(){return `<div class="card"><b>${t("users")}</b>${CODE?`<p>${t("code")} : <b>${esc(CODE)}</b></p>`:""}`+MEM.map(m=>`<div class="row"><span>${esc(m.name)}<br><span class="mut">${t(m.role)}</span></span>${m.user_id===SES.uid?"":`<span><button class="lgb" data-a="mr" data-u="${m.user_id}" data-r="${m.role==="admin"?"staff":"admin"}">→ ${t(m.role==="admin"?"staff":"admin")}</button> <button class="lgb" data-a="mx" data-u="${m.user_id}">×</button></span>`}</div>`).join("")+errh()+`<p class="mut">${t("cinfo")}</p></div>`}
+function vSet(){const h=vSetL();return CLOUD.url?h.split(`<div class="card"><b>${t("users")}</b>`)[0]+vMembers():h}
+async function loadMem(){if(!sb||!S.cloud.co||!navigator.onLine)return;try{const r=await sb.from("members").select("user_id,name,role").eq("company_id",S.cloud.co);if(r.data)MEM=r.data;const c=await sb.rpc("company_code",{c:S.cloud.co});if(c.data)CODE=c.data}catch(e){}R()}
+const cj=o=>JSON.stringify(o,(k,v)=>v&&typeof v==="object"&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,b)=>(a[b]=v[b],a),{}):v);
+const cfgDoc=()=>{const c={...S.cfg};delete c.lang;delete c.till;return c};
+const setSy=x=>{const e=$("sy");if(e)e.textContent=x};
+function wipe(){const l=S.cfg.lang;S=JSON.parse(DEF);S.cfg.lang=l}
+async function afterAuth(){try{
+ let ss=null;try{ss=(await sb.auth.getSession()).data.session}catch(e){}
+ const cs={name:S.cloud.name,role:S.cloud.role,uid:S.cloud.uid};
+ if(!navigator.onLine&&S.cloud.co&&S.cloud.uid&&(!ss||ss.user.id===S.cloud.uid)){SES=cs;return}
+ if(!ss){SES=null;AUTHED=false;return}
+ let m=null,er=false;try{const r=await sb.from("members").select("role,name,company_id,companies(name)").eq("user_id",ss.user.id).limit(1);er=!!r.error;m=r.data&&r.data[0]}catch(e){er=true}
+ if(!m&&er&&S.cloud.co&&S.cloud.uid===ss.user.id){SES=cs;return}
+ if(!m){AUTHED=true;SES=null;return}
+ if(S.cloud.co&&S.cloud.co!==m.company_id)wipe();
+ Object.assign(S.cloud,{co:m.company_id,coName:m.companies?m.companies.name:"",role:m.role,name:m.name,uid:ss.user.id});
+ SES={name:m.name,role:m.role,uid:ss.user.id};AUTHED=false;ERR="";
+ if(!S.cfg.till)S.cfg.till=String.fromCharCode(65+Math.random()*26|0)+String.fromCharCode(65+Math.random()*26|0);
+ V="tabs";store();sync()}finally{BOOT=false}}
+async function sync(){
+ if(!sb||!S.cloud.co||SYN||!SES)return;
+ if(!navigator.onLine){setSy("✈");return}
+ SYN=true;setSy("☁ …");let ch=0;
+ try{
+  const co=S.cloud.co,ad=SES.role==="admin",h=S.cloud.h;let lp=S.cloud.lp||"1970-01-01T00:00:00Z";
+  for(let pg=0;pg<20;pg++){
+   const r=await sb.from("docs").select("kind,id,data,deleted,updated_at").eq("company_id",co).gte("updated_at",new Date(Date.parse(lp)-60000).toISOString()).order("updated_at").limit(1000);
+   if(r.error)throw r.error;
+   for(const d of r.data){const k=d.kind+"|"+d.id;
+    if(d.kind==="cfg"&&d.data){if(h[k]===undefined||cj(cfgDoc())===h[k]){const n=cj(d.data);if(n!==cj(cfgDoc())){S.cfg=Object.assign({},S.cfg,d.data);ch++}h[k]=n}}
+    else if(d.kind==="menu"&&d.data&&d.data.menu){if(h[k]===undefined||cj({menu:S.menu})===h[k]){const n=cj(d.data);if(n!==cj({menu:S.menu})){S.menu=d.data.menu;ch++}h[k]=n}}
+    else if(d.kind==="tab"){const i=S.tabs.findIndex(x=>String(x.id)===d.id);
+     if(d.deleted){if(i>=0){S.tabs.splice(i,1);ch++}delete h[k]}
+     else if(d.data){const n=cj(d.data);if(i<0){if(h[k]===undefined){S.tabs.push(d.data);h[k]=n;ch++}}else if(h[k]===undefined||cj(S.tabs[i])===h[k]){if(n!==cj(S.tabs[i])){S.tabs[i]=d.data;ch++}h[k]=n}}}
+    else if(d.kind==="rec"&&d.data){if(!S.rec.some(x=>x.no===d.id)){S.rec.push({...d.data,_s:1});ch++}}
+   }
+   if(r.data.length)lp=r.data[r.data.length-1].updated_at;
+   if(r.data.length<1000)break}
+  S.cloud.lp=lp;if(ch)S.rec.sort((a,b)=>a.ts<b.ts?1:-1);
+  const up=[],add=(kind,id,d)=>{const j=cj(d),k=kind+"|"+id;if(h[k]!==j)up.push({row:{company_id:co,kind,id,data:d,deleted:false},k,j})};
+  if(ad){add("cfg","cfg",cfgDoc());add("menu","menu",{menu:S.menu})}
+  S.tabs.forEach(x=>add("tab",String(x.id),x));
+  Object.keys(h).filter(k=>k.startsWith("tab|")&&!S.tabs.some(x=>"tab|"+x.id===k)).forEach(k=>up.push({row:{company_id:co,kind:"tab",id:k.slice(4),data:null,deleted:true},k,j:null}));
+  if(up.length){const r=await sb.from("docs").upsert(up.map(u=>u.row),{onConflict:"company_id,kind,id"});if(r.error)throw r.error;up.forEach(u=>{if(u.j===null)delete h[u.k];else h[u.k]=u.j})}
+  const nr=S.rec.filter(x=>!x._s);
+  if(nr.length){const r=await sb.from("docs").upsert(nr.map(x=>({company_id:co,kind:"rec",id:x.no,data:x})),{onConflict:"company_id,kind,id",ignoreDuplicates:true});if(r.error)throw r.error;nr.forEach(x=>x._s=1)}
+  store();setSy("☁ ✓")
+ }catch(e){setSy("☁ !")}
+ SYN=false;
+ if(ch){const a=document.activeElement;if(!a||!/INPUT|SELECT/.test(a.tagName))R()}}
+function R(){
+ $("ttl").textContent=S.cfg.name;$("lg").textContent=S.cfg.lang==="fr"?"EN":"FR";$("prb").textContent=S.cfg.lang==="fr"?"Imprimer":"Print";$("clb").textContent=S.cfg.lang==="fr"?"Fermer":"Close";
+ const ad=SES&&SES.role==="admin";if(V==="set"&&!ad)V="tabs";
+ $("lo").textContent=SES?SES.name+" ⏻":"";$("lo").style.display=SES?"":"none";document.querySelector("nav").style.display=SES?"":"none";
+ document.querySelectorAll("nav button").forEach(b=>{b.textContent=t(b.dataset.v);b.style.display=b.dataset.v==="set"&&!ad?"none":"";b.classList.toggle("on",b.dataset.v===V||(V==="tab"&&b.dataset.v==="tabs"))});
+ $("app").innerHTML=!SES?vLogin():V==="tabs"?vTabs():V==="tab"?vTab():V==="rec"?vRec():vSet()}
+function show(x){
+ const h=x.hd,s=x.snap,lc=S.cfg.lang==="fr"?"fr-FR":"en-GB",d=new Date(x.ts);
+ let o=`<div class="c"><div style="font-size:16px;font-weight:700">${esc(h.name)}</div>${esc(h.addr)}${h.nif?"<br>NIF : "+esc(h.nif):""}</div><hr><div class="c">${t("inv")}<div class="rn">N° ${x.no}</div></div><div class="row"><span>${d.toLocaleDateString(lc)}</span><span>${d.toLocaleTimeString(lc,{hour:"2-digit",minute:"2-digit"})}</span></div><div>${t(x.type)} ${esc(x.label)}</div>${x.guest?`<div>${t("guest")} : ${esc(x.guest)}</div>`:""}${x.by?`<div>${t("by")} : ${esc(x.by)}</div>`:""}<hr><table><tr><th>${t("qty")}</th><th>${t("item")}</th><th class="r">${t("amt")}</th></tr>`;
+ s.ls.forEach(l=>o+=`<tr><td>${l.q}</td><td>${esc(l.n)}${s.on&&!l.tx?" *":""}</td><td class="r">${nn(l.base)}</td></tr>`);
+ o+=`</table><hr><div class="row"><span>${t("ht")}</span><span>${nn(s.ht)}</span></div>`+(s.on?`<div class="row"><span>${t("tva")} ${s.rate}%</span><span>${nn(s.tva)}</span></div>`:"")+`<div class="net"><span>${t("net")}</span><span>${f(s.tot)}</span></div>`+x.pays.map(p=>`<div class="row"><span>${t(p.m)}</span><span>${nn(p.a)}</span></div>`).join("")+(s.on?`<div style="margin-top:6px">${t("notax")}</div>`:"")+`<hr><div class="c">${esc(h.foot)}</div>`;
+ $("rb").innerHTML=o;$("rc").style.display="flex"}
+function closeTab(x){
+ if(due(x)>0||!lines(x).length)return;
+ const c=S.cfg;x.snap=calc(x);x.no=nextNo(new Date());x.ts=new Date().toISOString();x.hd={name:c.name,addr:c.addr,nif:c.nif,foot:c.foot};x.by=SES?SES.name:"";
+ S.rec.unshift(x);S.tabs=S.tabs.filter(y=>y!==x);V="tabs";save();R();show(x)}
+async function exportCsv(){
+ const fr=S.cfg.lang==="fr",sep=fr?";":",",q=v=>{v=String(v);return /[",;\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v};
+ const head=fr?["N° facture","Date","Heure","Type","Chambre/Table","Client","Articles","Total HT","Taxe touristique","TVA","Total TTC","Paiements"]:["Invoice no.","Date","Time","Type","Room/Table","Guest","Items","Total excl. VAT","Tourist tax","VAT","Total","Payments"];
+ const rows=S.rec.slice().reverse().map(r=>{const d=new Date(r.ts),s=r.snap;return[r.no,d.toLocaleDateString(fr?"fr-FR":"en-GB"),d.toLocaleTimeString(fr?"fr-FR":"en-GB",{hour:"2-digit",minute:"2-digit"}),t(r.type),r.label,r.guest,s.ls.map(l=>l.q+"x "+l.n).join(" | "),s.ht,s.ls.filter(l=>l.tour).reduce((a,l)=>a+l.base,0),s.tva,s.tot,r.pays.map(p=>t(p.m)+" "+p.a).join(" | ")]});
+ const txt="\ufeff"+[head].concat(rows).map(a=>a.map(q).join(sep)).join("\r\n");
+ try{const dl=await claude.use("downloads");if(dl)await dl.save({filename:"ventes-"+ymd(new Date())+".csv",data:txt});else throw 0}
+ catch(e){try{const u=URL.createObjectURL(new Blob([txt],{type:"text/csv"})),a=document.createElement("a");a.href=u;a.download="ventes-"+ymd(new Date())+".csv";document.body.appendChild(a);a.click();a.remove()}catch(e2){}}}
+document.addEventListener("click",async e=>{
+ const n=e.target.closest("nav [data-v]");if(n){ERR="";V=n.dataset.v;R();if(V==="set"&&sb)loadMem();window.scrollTo(0,0);return}
+ const b=e.target.closest("[data-a]");if(!b)return;
+ const a=b.dataset.a,i=+b.dataset.i,x=tab();
+ if(["addm","delm","au","pu","du","mr","mx"].includes(a)&&!(SES&&SES.role==="admin"))return;
+ if(a==="nr"||a==="nb"){const id=sb?"t"+rnd():++S.seq;S.tabs.push({id,type:a==="nr"?"room":"bar",label:"",guest:"",persons:1,nights:1,rate:S.cfg.roomRate,items:[],pays:[]});CUR=id;V="tab"}
+ else if(a==="open"){CUR=isNaN(+b.dataset.id)?b.dataset.id:+b.dataset.id;V="tab"}
+ else if(a==="back")V="tabs";
+ else if(a==="add"){const m=S.menu[i],ex=x.items.find(l=>l.n===m.n&&l.p===m.p&&l.t===m.t);ex?ex.q++:x.items.push({n:m.n,p:m.p,t:m.t,q:1})}
+ else if(a==="p")x.items[i].q++;
+ else if(a==="m"){if(--x.items[i].q<=0)x.items.splice(i,1)}
+ else if(a==="ap"){const am=Math.min(Math.round(+$("pa").value),Math.round(due(x)));if(am>0)x.pays.push({m:$("pm").value,a:am})}
+ else if(a==="rp")x.pays.splice(i,1);
+ else if(a==="del"){S.tabs=S.tabs.filter(y=>y!==x);V="tabs"}
+ else if(a==="close"){closeTab(x);return}
+ else if(a==="rc"){show(S.rec[i]);return}
+ else if(a==="exp"){exportCsv();return}
+ else if(a==="addm")S.menu.push({n:t("newItem"),p:0,t:1});
+ else if(a==="delm")S.menu.splice(i,1);
+ else if(a==="lang")S.cfg.lang=S.cfg.lang==="fr"?"en":"fr";
+ else if(a==="li"||a==="su"){ERR="";const em=$("em").value.trim(),pw=$("pw").value;if(!em||!pw)ERR="authfail";else{const r=a==="li"?await sb.auth.signInWithPassword({email:em,password:pw}):await sb.auth.signUp({email:em,password:pw});if(r.error)ERR="authfail";else if(!r.data.session)ERR="confirm";else{BOOT=true;R();await afterAuth()}}}
+ else if(a==="cc"||a==="jc"){const nm=$(a==="cc"?"un":"un2").value.trim(),v=$(a==="cc"?"cn":"jc").value.trim();if(!nm||!v)ERR="fail";else{const r=a==="cc"?await sb.rpc("create_company",{cname:v,uname:nm}):await sb.rpc("join_company",{jcode:v,uname:nm});if(r.error)ERR=a==="cc"?"fail":"badcode";else{ERR="";BOOT=true;R();await afterAuth()}}}
+ else if(a==="mr"||a==="mx"){const r=a==="mr"?await sb.rpc("set_member",{uid:b.dataset.u,newrole:b.dataset.r}):await sb.rpc("remove_member",{uid:b.dataset.u});ERR=r.error?"fail":"";loadMem();return}
+ else if(a==="mk"){const nm=$("un").value.trim(),p1=$("p1").value;if(!nm)ERR="reqname";else if(!/^\d{4,}$/.test(p1))ERR="pinrule";else if(p1!==$("p2").value)ERR="nomatch";else{const salt=rnd();S.users.push({id:++S.seq,name:nm,role:"admin",salt,h:await hp(salt,p1)});SES=S.users[0];V="tabs";ERR=""}}
+ else if(a==="in"){const u=S.users.find(y=>y.id==$("un").value);if(u&&await hp(u.salt,$("p1").value)===u.h){SES=u;V="tabs";ERR=""}else ERR="bad"}
+ else if(a==="out"){if(sb)try{await sb.auth.signOut()}catch(e){}AUTHED=false;SES=null;V="tabs";ERR="";$("rc").style.display="none"}
+ else if(a==="au"){const nm=$("nu").value.trim(),pn=$("np").value;if(!nm)ERR="reqname";else if(!/^\d{4,}$/.test(pn))ERR="pinrule";else{const salt=rnd();S.users.push({id:++S.seq,name:nm,role:$("nrl").value,salt,h:await hp(salt,pn)});ERR=""}}
+ else if(a==="pu"){const pn=$("pu"+i).value;if(!/^\d{4,}$/.test(pn))ERR="pinrule";else{const u=S.users[i];u.salt=rnd();u.h=await hp(u.salt,pn);ERR=""}}
+ else if(a==="du"){const u=S.users[i];if(u===SES)return;if(u.role==="admin"&&S.users.filter(y=>y.role==="admin").length<2)ERR="lastadmin";else{S.users.splice(i,1);ERR=""}}
+ else if(a==="cl"){$("rc").style.display="none";return}
+ else if(a==="pr"){window.print();return}
+ save();R()});
+document.addEventListener("change",e=>{const el=e.target,d=el.dataset,x=tab();
+ if((d.c!==undefined||d.mn!==undefined||d.mp!==undefined||d.mt!==undefined)&&!(SES&&SES.role==="admin"))return;
+ if(d.f&&x)x[d.f]=["persons","nights","rate"].includes(d.f)?Math.max(0,+el.value||0):el.value;
+ else if(d.c!==undefined)S.cfg[d.c]=NUM.includes(d.c)?(+el.value||0):el.value;
+ else if(d.mn!==undefined)S.menu[d.mn].n=el.value;
+ else if(d.mp!==undefined)S.menu[d.mp].p=+el.value||0;
+ else if(d.mt!==undefined)S.menu[d.mt].t=+el.value;
+ else return;
+ save();R()});
+R();
+if(sb){afterAuth().catch(()=>{}).finally(()=>{BOOT=false;R()});setInterval(sync,20000);addEventListener("online",sync);document.addEventListener("visibilitychange",()=>{if(!document.hidden)sync()})}
+try{if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})}catch(e){}
+</script>
+</body>
+</html>
